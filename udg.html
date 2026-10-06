@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الأحياء الشامل - أبو زهرة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #1e293b;
+            --accent: #059669;
+            --accent-yellow: #d97706;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --correct: #10b981;
+            --wrong: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 15px;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e2e8f0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #1e3a8a, #059669, #d97706);
+        }
+
+        .prophet-blessing {
+            background: #f0fdf4;
+            border: 1px dashed #059669;
+            color: #166534;
+            padding: 10px 18px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .teacher-badge {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 6px 16px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .teacher-badge span {
+            font-size: 0.9rem;
+            color: #1e40af;
+            font-weight: 800;
+        }
+
+        .main-title {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .trial-note {
+            background-color: #fffbeb;
+            border-right: 4px solid var(--accent-yellow);
+            color: #b45309;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 20px 0 30px 0;
+            text-align: right;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: #ffffff;
+            border: none;
+            padding: 16px 45px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .quiz-header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .quiz-title-sm {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .question-num {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 640px) {
+            .options-grid.tf-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid #f1f5f9;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.98rem;
+        }
+
+        .option-label:hover {
+            border-color: #cbd5e1;
+            background-color: #f1f5f9;
+        }
+
+        .option-label input[type="radio"] {
+            margin-left: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .essay-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            resize: vertical;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin: 30px 0 50px 0;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--accent), #047857);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        }
+
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: #f0fdf4;
+            border: 6px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .score-num {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .review-title {
+            text-align: right;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 30px 0 15px 0;
+            color: var(--primary-dark);
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .review-item {
+            text-align: right;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-right: 5px solid #cbd5e1;
+        }
+
+        .review-item.wrong {
+            border-right-color: var(--wrong);
+            background: #fef2f2;
+        }
+
+        .review-item.correct {
+            border-right-color: var(--correct);
+            background: #f0fdf4;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .badge-wrong { background: #fee2e2; color: #991b1b; }
+        .badge-correct { background: #dcfce7; color: #166534; }
+
+        .btn-retry {
+            background: linear-gradient(135deg, var(--accent-yellow), #b45309);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- الصفحة الأولى -->
+    <div id="welcome-page" class="welcome-card" style="display: block;">
+        <div class="prophet-blessing">
+            اللهم صلّ وسلّم وبارك على نبينا محمد
+        </div>
+
+        <div>
+            <div class="teacher-badge">
+                <span>إعداد ورعاية: أ. أبو زهرة</span>
+            </div>
+            
+            <h1 class="main-title">اختبار الأحياء الشامل</h1>
+            <p style="color: var(--text-muted); font-weight: 600;">اختبار تفاعلي لمراجعة مقرر الأحياء</p>
+        </div>
+
+        <div class="trial-note">
+            ملاحظة هامة: الاختبار ذا يشوفك كيف ذاكرت يعني تجريبي، حل بتركيز حتى تقيم مستواك الحقيقي!
+        </div>
+
+        <button type="button" class="btn-start" onclick="startQuiz()">ابدأ الاختبار</button>
+    </div>
+
+    <!-- صفحة الأسئلة -->
+    <div id="quiz-page" style="display: none;">
+        <div class="quiz-header">
+            <div>
+                <div class="quiz-title-sm">اختبار مادة الأحياء</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">30 سؤالاً متنوعاً</div>
+            </div>
+            <div id="progress-text" style="font-weight: 800; color: var(--primary);">0 / 30</div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <br>
+
+        <form id="quiz-form">
+            <div id="questions-container"></div>
+
+            <div class="submit-section">
+                <button type="button" class="btn-submit" onclick="calculateResult()">شوف نتيجتك يا بطل</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- صفحة النتيجة -->
+    <div id="result-page" style="display: none;">
+        <div class="result-card">
+            <h2 style="color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 15px;">نتيجة الاختبار</h2>
+            
+            <div class="score-circle">
+                <span id="score-val" class="score-num">0</span>
+                <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 700;">من 30</span>
+            </div>
+
+            <h3 id="feedback-msg" style="color: var(--primary); margin-bottom: 10px;"></h3>
+            <p id="percentage-msg" style="color: var(--text-muted); font-weight: 700;"></p>
+
+            <div class="review-title">مراجعة الأسئلة والتقييم:</div>
+            <div id="review-container"></div>
+
+            <button type="button" class="btn-retry" onclick="resetQuiz()">تبي تعيد الاختبار</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const questionsData = [
+        // 10 أسئلة صح وخطأ
+        { type: "tf", question: "تناظر شوكيات الجلد البالغة هو تناظر شعاعي.", correct: "صح" },
+        { type: "tf", question: "تمتلك شوكيات الجلد هيكلاً عظمياً خارجياً مكوناً من السيليكا.", correct: "خطأ", note: "هيكلها داخلي مكون من كربونات الكالسيوم." },
+        { type: "tf", question: "ينتقل الماء إلى داخل جسم شوكيات الجلد عبر المصفاة ثم إلى القناة الحلقة.", correct: "صح" },
+        { type: "tf", question: "تتنفس شوكيات الجلد بطرق متعددة منها الأقدام الأنبوبية والشجرة التنفسية.", correct: "صح" },
+        { type: "tf", question: "يرقات شوكيات الجلد تتميز بتناظر شعاعي.", correct: "خطأ", note: "يرقات شوكيات الجلد ذات تناظر جانبي." },
+        { type: "tf", question: "الحبل الظهري تركيبة مرنة تمتد على طول جسم الحبليات.", correct: "صح" },
+        { type: "tf", question: "تختلف اللافقاريات الحبليات عن الفقاريات بأنها تمتلك عموداً فقرياً كلسياً.", correct: "خطأ", note: "اللافقاريات الحبليات لا تمتلك عموداً فقرياً." },
+        { type: "tf", question: "السهيم حيوان صغير شفاف مدفون في رمل المياه الضحلة من الحبليات.", correct: "صح" },
+        { type: "tf", question: "جميع الأسماك تمتلك قشوراً مشطية فقط لتغطية أجسادها.", correct: "خطأ", note: "تتنوع القشور بين مشطية، قرصية، صفائحية، ومعينية لمعة." },
+        { type: "tf", question: "جميع الزواحف والطيور تضع بيضاً أمنيونياً (رهلياً) يحمي الجنين.", correct: "صح" },
+
+        // 19 سؤال اختيار من متعدد
+        { type: "mc", question: "تتحرك شوكيات الجلد بوسيلتها الرئيسية عن طريق:", options: ["الزعانف المزدوجة", "الأقدام الأنبوبية", "الأهداب الخارجية", "الإنقباض العضلي السريع فقط"], correct: "الأقدام الأنبوبية" },
+        { type: "mc", question: "نوع تجويف الجسم في شوكيات الجلد والحبليات هو:", options: ["تجويف جسمي حقيقي", "تجويف جسمي كاذب", "عديمة التجويف الجسمي", "مزدوج التجويف"], correct: "تجويف جسمي حقيقي" },
+        { type: "mc", question: "من الأمثلة على طائفة الزنبقانيات:", options: ["نجم البحر الهش", "دولا الرمل", "زنابق البحر ونجم البحر الريشي", "خيارات البحر"], correct: "زنابق البحر ونجم البحر الريشي" },
+        { type: "mc", question: "العضو الذي يسهم في الكشف عن التغيرات في حركة الماء لدى الأسماك هو:", options: ["المثانة الهوائية", "جهاز الخط الجانبي", "العرف العصبي", "أعضاء جاكوبسون"], correct: "جهاز الخط الجانبي" },
+        { type: "mc", question: "تتكون القشرة الخارجية للبيضة الرهلية في الطيور من مادة صلبة، بينما في الزواحف تكون:", options: ["صلبة زجاجية", "جلدية مرنة", "رقيقة جداً", "غضروفية كلسية"], correct: "جلدية مرنة" },
+        { type: "mc", question: "عدد حجرات القلب في الأسماك هو:", options: ["حجرة واحدة", "حجرتان (أذين وبطين)", "ثلاث حجرات", "أربع حجرات"], correct: "حجرتان (أذين وبطين)" },
+        { type: "mc", question: "عضو الإخراج الرئيسي في البرمائيات والأسماك هو:", options: ["الكبد", "الكلى (النيفرون)", "الطحال", "الرئتين"], correct: "الكلى (النيفرون)" },
+        { type: "mc", question: "تتنفس البرمائيات البالغة عبر طرق متعددة منها:", options: ["الخياشيم والرئتين فقط", "الرئتين والجلد وبطانة تجويف الفم", "الأقدام الأنبوبية", "الشجرة التنفسية"], correct: "الرئتين والجلد وبطانة تجويف الفم" },
+        { type: "mc", question: "من البرمائيات التي تنتمي لرتبة عديمة الأرجل:", options: ["الضفدع", "العلجوم", "السيسيليا", "السمندل"], correct: "السيسيليا" },
+        { type: "mc", question: "تمتلك الزواحف قلباً يتكون غالباً من ثلاث حجرات، ما عدا أي منها يمتلك أربع حجرات كاملة؟", options: ["الأفاعي", "السلاحف", "التماسيح", "الحرادين"], correct: "التماسيح" },
+        { type: "mc", question: "وظيفة أعضاء جاكوبسون في الأفاعي هي:", options: ["التنفس وتحليل الغازات", "تمييز الرائحة وشم المواد الكيميائية", "الرؤية الليلية", "إفراز السموم"], correct: "تمييز الرائحة وشم المواد الكيميائية" },
+        { type: "mc", question: "الريش الذي يغطي جسم الطائر ويساعده على الطيران يسمى:", options: ["الريش الزغبي", "الريش المحيطي", "الريش الزيتي", "الريش الخياشيمي"], correct: "الريش المحيطي" },
+        { type: "mc", question: "الكائنات التي تولد حرارة جسمها داخلياً عن طريق العمليات الأيضية تسمى:", options: ["متغيرة درجة الحرارة", "ثابتة درجة الحرارة", "خارجية الحرارة", "عديمة الحرارة"], correct: "ثابتة درجة الحرارة" },
+        { type: "mc", question: "من الأمثلة على الأسماك الغضروفية:", options: ["السمك البالطي", "القرش", "الجلكي", "التونة"], correct: "القرش" },
+        { type: "mc", question: "تفرز الغدة الزيتية الموجودة في قاعدة ذيل الطيور مادة تستخدم لـ:", options: ["جذب الفرائص", "عزل الريش ومقاومة الماء", "تسهيل الهضم", "تبريد الجسم"], correct: "عزل الريش ومقاومة الماء" },
+        { type: "mc", question: "المكون في البيضة الرهلية الذي يجمع الفضلات الناتجة عن الجنين هو:", options: ["كيس الصفار", "غشاء الكوريون", "كيس الممطار", "الغشاء الرهلي"], correct: "كيس الممطار" },
+        { type: "mc", question: "نوع الإخصاب في غالبية الأسماك والبرمائيات يكون:", options: ["داخلي فقط", "خارجي", "ذاتي", "تجددي"], correct: "خارجي" },
+        { type: "mc", question: "أي من الطوائف التالية ينتمي إليها حيوان نجم البحر الهش؟", options: ["الأنجميات", "الثعبانيات", "القنفذيات", "القثائيات"], correct: "الثعبانيات" },
+        { type: "mc", question: "الصفة المميزة للعرف العصبي هي أنه مجموعة من الخلايا تنشأ من:", options: ["الجهاز الهضمي", "الطبقة الخارجية للأنبوب العصبي أثناء النمو الجنيني", "القلب والدوران", "العمود الفقري البالغ"], correct: "الطبقة الخارجية للأنبوب العصبي أثناء النمو الجنيني" },
+
+        // سؤال مقالي واحد
+        { type: "essay", question: "اذكر وظيفة واحدة لكل من: (أ) المثانة الهوائية في الأسماك، (ب) الأقدام الأنبوبية في شوكيات الجلد.", correct: "أ) المثانة الهوائية: التحكم في عمق الغوص والطفو. ب) الأقدام الأنبوبية: الحركة والتغذية التنفس والإخراج." }
+    ];
+
+    function startQuiz() {
+        document.getElementById('welcome-page').style.display = 'none';
+        document.getElementById('quiz-page').style.display = 'block';
+        renderQuestions();
+        window.scrollTo(0, 0);
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questions-container');
+        container.innerHTML = '';
+
+        questionsData.forEach((q, index) => {
+            const qCard = document.createElement('div');
+            qCard.className = 'question-card';
+            
+            let html = '<span class="question-num">السؤال ' + (index + 1) + '</span>';
+            html += '<div class="question-text">' + q.question + '</div>';
+
+            if (q.type === 'tf') {
+                html += '<div class="options-grid tf-grid">' +
+                    '<label class="option-label"><input type="radio" name="q' + index + '" value="صح" onchange="updateProgress()"> صح</label>' +
+                    '<label class="option-label"><input type="radio" name="q' + index + '" value="خطأ" onchange="updateProgress()"> خطأ</label>' +
+                    '</div>';
+            } else if (q.type === 'mc') {
+                html += '<div class="options-grid">';
+                q.options.forEach(opt => {
+                    html += '<label class="option-label"><input type="radio" name="q' + index + '" value="' + opt + '" onchange="updateProgress()"> ' + opt + '</label>';
+                });
+                html += '</div>';
+            } else if (q.type === 'essay') {
+                html += '<textarea class="essay-input" id="q' + index + '-essay" placeholder="اكتب إجابتك هنا..." oninput="updateProgress()"></textarea>';
+            }
+
+            qCard.innerHTML = html;
+            container.appendChild(qCard);
+        });
+    }
+
+    function updateProgress() {
+        let answeredCount = 0;
+        questionsData.forEach((q, index) => {
+            if (q.type === 'essay') {
+                const el = document.getElementById('q' + index + '-essay');
+                if (el && el.value.trim().length > 2) answeredCount++;
+            } else {
+                const selected = document.querySelector('input[name="q' + index + '"]:checked');
+                if (selected) answeredCount++;
+            }
+        });
+
+        document.getElementById('progress-text').innerText = answeredCount + ' / 30';
+        const percentage = (answeredCount / 30) * 100;
+        document.getElementById('progress-bar').style.width = percentage + '%';
+    }
+
+    function calculateResult() {
+        let score = 0;
+        const reviewContainer = document.getElementById('review-container');
+        reviewContainer.innerHTML = '';
+
+        questionsData.forEach((q, index) => {
+            let userAns = "";
+            let isCorrect = false;
+
+            if (q.type === 'essay') {
+                const el = document.getElementById('q' + index + '-essay');
+                userAns = el ? el.value.trim() : "";
+                if (userAns.length > 3) {
+                    score += 1;
+                    isCorrect = true;
+                }
+            } else {
+                const selected = document.querySelector('input[name="q' + index + '"]:checked');
+                userAns = selected ? selected.value : "لم يتم الإجابة";
+                if (userAns === q.correct) {
+                    score += 1;
+                    isCorrect = true;
+                }
+            }
+
+            const revItem = document.createElement('div');
+            revItem.className = 'review-item ' + (isCorrect ? 'correct' : 'wrong');
+            
+            let statusText = isCorrect ? 'إجابة صحيحة' : 'إجابة خاطئة';
+            let badgeClass = isCorrect ? 'badge-correct' : 'badge-wrong';
+
+            let revHtml = '<span class="badge-status ' + badgeClass + '">' + statusText + '</span>' +
+                '<div style="font-weight: 700; color: var(--text-dark); margin-bottom: 5px;">' + (index + 1) + '. ' + q.question + '</div>' +
+                '<div style="font-size: 0.9rem; color: var(--text-muted);">إجابتك: <strong>' + (userAns || 'لا يوجد') + '</strong></div>';
+
+            if (!isCorrect) {
+                revHtml += '<div style="font-size: 0.9rem; color: var(--correct); font-weight: 700; margin-top: 4px;">الإجابة النموذجية: ' + q.correct + '</div>';
+                if (q.note) {
+                    revHtml += '<div style="font-size: 0.85rem; color: #b45309; margin-top: 2px;">توضيح: ' + q.note + '</div>';
+                }
+            }
+
+            revItem.innerHTML = revHtml;
+            reviewContainer.appendChild(revItem);
+        });
+
+        document.getElementById('quiz-page').style.display = 'none';
+        document.getElementById('result-page').style.display = 'block';
+
+        document.getElementById('score-val').innerText = score;
+        const percent = Math.round((score / 30) * 100);
+        document.getElementById('percentage-msg').innerText = 'النسبة المئوية: ' + percent + '%';
+
+        const feedbackMsg = document.getElementById('feedback-msg');
+        if (percent >= 90) {
+            feedbackMsg.innerText = "أداء ممتاز جداً ومبدع!";
+        } else if (percent >= 75) {
+            feedbackMsg.innerText = "أداء جيد جداً!";
+        } else if (percent >= 50) {
+            feedbackMsg.innerText = "نتيجة مقبولة، تحتاج لمراجعة بعض النقاط.";
+        } else {
+            feedbackMsg.innerText = "حاول مرة أخرى وسوف تتحسن بالتأكيد!";
+        }
+
+        window.scrollTo(0, 0);
+    }
+
+    function resetQuiz() {
+        document.getElementById('result-page').style.display = 'none';
+        document.getElementById('welcome-page').style.display = 'block';
+        document.getElementById('quiz-form').reset();
+        document.getElementById('progress-bar').style.width = '0%';
+        document.getElementById('progress-text').innerText = '0 / 30';
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
